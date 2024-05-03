@@ -35,7 +35,6 @@ const createSendToken = (user, statusCode, req, res) => {
   console.log('tokena', token);
   res.status(statusCode).json({
     status: 'success',
-    token,
     data: {
       token,
       user
@@ -264,7 +263,9 @@ exports.restrictTo = (...roles) => {
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
+  console.log('req.body.email', req.body.email);
   const user = await User.findOne({ email: req.body.email });
+  console.log('user', user);
   if (!user) {
     return next(new AppError('There is no user with email address.', 404));
   }
@@ -293,7 +294,8 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      message: 'Token sent to email!'
+      message: 'Token sent to here(just practice) instead of using an email!',
+      data: { resetToken }
     });
   } catch (err) {
     user.passwordResetToken = undefined;
@@ -357,4 +359,22 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   // 4) Log user in, send JWT
   createSendToken(user, 200, req, res);
+});
+
+exports.updateMyProfile = catchAsync(async (req, res, next) => {
+  // 1) Get user from collection
+
+  const doc = await User.findByIdAndUpdate(
+    req.user.id,
+    { ...req.body },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: doc
+  });
 });

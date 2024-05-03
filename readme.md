@@ -7,3 +7,7 @@
 5. 그다음 헤로쿠 들어가서 env 설정 해주면됨!
 6. heroku apps:rename kwhouse <= api 이름바꾸기
 7. heroku open
+8. 만약 push거절당하면 package-lock 지우고 다시 npm install 뒤 git push heroku main 하면됨!
+
+--------- postman publish ----------
+는 view documentation 누른뒤에 publish 가있음....

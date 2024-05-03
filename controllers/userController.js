@@ -181,6 +181,33 @@ exports.getAllUsers = factory.getAll(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 
+exports.updateUserState = catchAsync(async (req, res, next) => {
+  console.log(' req.user.id', req.user.id);
+  console.log(' req.body.active', req.body.active);
+  const doc = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      active: req.body.active
+    },
+    { returnOriginal: false }
+  ).select({
+    username: 1,
+    active: 1
+  });
+
+  const updatedDoc = await doc.populate({
+    path: 'promotion',
+    //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+    // room에서 owner도 find pre를 통해 오너를 계속찾아주기에!
+    select: 'active'
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: doc
+  });
+});
+
 exports.myWishlist = catchAsync(async (req, res, next) => {
   // const query = User.findById(req.user.id, { fields: 'name' });
   const query = User.findById(req.user.id, 'wishlist');

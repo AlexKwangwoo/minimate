@@ -122,10 +122,11 @@ userSchema.pre(/^find/, function(next) {
   // equal === true /{active:true} 하는게 아니라 active !== false 를 찾을것임!
   // this points to the current query
 
-  this.find({ active: { $ne: false } }).populate({
-    path: 'wishlist',
-    select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
-  });
+  this.find({ active: { $ne: false } });
+  // .populate({
+  //   path: 'wishlist',
+  //   select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+  // });
   next();
 });
 
@@ -165,7 +166,7 @@ userSchema.methods.createPasswordResetToken = function() {
   // token을 바로 유저에 저장안하고.. 다시 암호화해서 저장한다
   console.log({ resetToken }, this.passwordResetToken);
 
-  // 10 mins 유효시간도 저장!
+  // 10 mins 유효시간도 저장! -> save는 여기 구문을 빠져나와 부모로직에서 user.save를 해줄것임
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
