@@ -20,6 +20,8 @@ const { SwaggerTheme } = require('swagger-themes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 const userRouter = require('./routes/userRoutes');
+const categoryRouter = require('./routes/categoryRoutes');
+
 // const amenityRouter = require('./routes/amenityRoutes');
 // const addOnServiceRouter = require('./routes/addOnServiceRoutes');
 // const categoryRouter = require('./routes/categoryRoutes');
@@ -145,6 +147,7 @@ app.use((req, res, next) => {
 
 app.use(compression()); //text 를 압축해줄것이다
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/categories', categoryRouter);
 
 const theme = new SwaggerTheme();
 

@@ -18,12 +18,12 @@ router.patch('/updateMyPassword', authController.updatePassword);
 router.patch('/myProfile', authController.updateMyProfile);
 
 router.get('/me', userController.getMe, userController.getUser);
-// router.patch(
-//   '/me/picture',
-//   userController.uploadUserImages,
-//   userController.insertUserImagesLinks,
-//   userController.updatePictureToUser
-// );
+router.patch(
+  '/me/picture',
+  userController.uploadUserImages,
+  userController.insertUserImagesLinks,
+  userController.updatePictureToUser
+);
 
 // router
 //   .route('/me/wishlist')

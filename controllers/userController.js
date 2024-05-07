@@ -31,9 +31,10 @@ AWS.config.update({
   region: 'us-east-1'
 });
 const s3 = new AWS.S3();
+
 const multerStorage = multerS3({
   s3: s3,
-  bucket: 'kwhouse',
+  bucket: 'minimate',
   key: (req, file, cb) => {
     const name = file.originalname.split('.')[0];
     const ext = file.mimetype.split('/')[1];
@@ -70,7 +71,7 @@ exports.updatePictureToUser = catchAsync(async (req, res, next) => {
   console.log('req.body.images', req.body.images);
   const doc = await User.findByIdAndUpdate(
     req.user.id,
-    { profile_img: req.body.images[0] },
+    { minime_img: req.body.images[0] },
     {
       new: true,
       runValidators: true

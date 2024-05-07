@@ -24,11 +24,25 @@ class APIFeatures {
 
     //Advanced Filtering
     let queryStr = JSON.stringify(queryObj);
+    console.log('queryStr', queryStr);
     // 필터 조건자앞에 다 $ 가 붙어야함..
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
     console.log('queryStr', queryStr);
     console.log('this.queryString', this.queryString);
+    console.log('SON.parse(queryStr)', JSON.parse(queryStr));
+
     this.query = this.query.find(JSON.parse(queryStr));
+    // this.query = this.query.find({
+    //   $or: [
+    //     {
+    //       kind: 'private_item'
+    //     },
+    //     {
+    //       kind: 'shop_item'
+    //     }
+    //   ]
+    // });
+
     // let query = Tour.find(JSON.parse(queryStr));
     return this;
   }
