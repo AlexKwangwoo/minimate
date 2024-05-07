@@ -1,174 +1,87 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 
-const shopItemSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, 'Please tell us your name!']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please provide your email'],
-    unique: true,
-    lowercase: true, //convert them to lowercase
-    validate: [validator.isEmail, 'Please provide a valid email']
-  },
+const shopItemSchema = new mongoose.Schema(
+  {
+    item_name: {
+      type: String,
+      unique: true,
+      required: [true, 'Provide name!'],
+      maxlength: [40, 'Name must have less or equal then 40 characters']
+    },
 
-  domain: {
-    type: String,
-    default: null
-  },
+    item_price: {
+      type: Number,
+      min: 0,
+      required: [true, 'Provide price!']
+    },
 
-  minime_img: {
-    type: String,
-    default: null
-  },
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Category', //User 여기껀 import필요없다 이렇게는 referencing
+      required: [true, 'Category must belong to a shop item']
+    },
 
-  point: {
-    type: Number,
-    default: 0
-  },
+    item_img: {
+      type: String,
+      default: null
+    },
 
-  birth: {
-    type: Date,
-    required: [true, 'check in date can not be empty!']
-  },
+    sales_volume: { type: Number, min: 0, default: 0 },
 
-  gender: {
-    type: String,
-    enum: ['male', 'female'],
-    required: [true, 'Please choose "man" or "woman"']
-  },
+    description: {
+      type: String,
+      maxlength: [
+        3000,
+        'Description must have less or equal then 100 characters'
+      ]
+    },
 
-  phone_number: {
-    type: String,
-    required: [true, 'Phone number is required']
-  },
-
-  // role: {
-  //   type: String,
-  //   enum: ['user', 'admin'],
-  //   default: 'user'
-  // },
-
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: 8,
-    select: false //이거 해주면  get user 써도 안보임! 디비에는 보일것임.. 단 패스워드 검사때도 ShopItem.find쓸때 이부분은
-    // 안오게 되는데.. +password를 추가인자로 넣어줘야 올 리턴데이터와 비교가능!
-  },
-
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      // This only works on CREATE and SAVE!!! ShopItem.create or ShopItem.save
-      validator: function(el) {
-        return el === this.password;
-      },
-      message: 'Passwords are not the same!'
+    createdAt: {
+      type: Date,
+      default: Date.now()
     }
   },
-
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
-  active: {
-    //유저를 지우는대신 잠금한다!
-    type: Boolean,
-    default: true,
-    select: false
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
-});
-
-//유저가 저장하기전에 이게 먼저 실행될것임
-// DOCUMENT MIDDLEWARE: runs before .save() and .create()
-// not .insertMany XXXXXX
-userSchema.pre('save', async function(next) {
-  console.log('check 11111');
-  // Only run this function if password was actually modified
-  if (!this.isModified('password')) return next();
-
-  // Hash the password with cost of 12
-  this.password = await bcrypt.hash(this.password, 12);
-
-  // Delete passwordConfirm field // no need for db, just need field 즉 필드만 있고 값은 없어도됨
-  this.passwordConfirm = undefined;
-  next();
-});
-
-userSchema.pre('save', function(next) {
-  console.log('check 222222');
-
-  //isNew 는 바로 document 데이터가 생성된지 확인...
-  // 이건 페스워드 바꾸는거 관련 또는 새로운데이터가 만들어진게 아니면 next!
-  // 즉 처음만들어진 유저는 passwordChangedAt이 없을것임!
-  if (!this.isModified('password') || this.isNew) return next();
-
-  // 위에 조건이 아닐경우 페스워드changedAt을 변경한다!
-  // 시간 차이를 좀더 빠르게 만드는걸로 해줘야 웹토큰이 뒤에 만들어진거라 생각가능... 웹토큰이 changedpw보다 빠르면
-  // 우리는 에러를 낼것임 // 즉 비번바꼈으니 새로운 웹토큰을 가져라.. 그토큰은 이시간보다 나중일것임!
-  this.passwordChangedAt = Date.now() - 1000;
-  next();
-});
-
-// ^find -=> find로 시작하는 메소드를 받는다면 실행
-userSchema.pre(/^find/, function(next) {
-  //유저찾을때 active가 not equal인걸로 받을것임!
-  // 미리 생성된 유저들중 active 필드가 없는곳이 있을것이므로
-  // equal === true /{active:true} 하는게 아니라 active !== false 를 찾을것임!
-  // this points to the current query
-
-  this.find({ active: { $ne: false } });
+);
+// 이건 자식이 포린키를 가지고있고 부모가 아무정보도 없을때.. 리뷰를 생각해보면 1000만개가 부모가 저장하기힘듬
+// 그래서 리뷰 자체에 부모키를 넣고 이렇게 불러올수있는것임!
+// shopItemSchema.virtual('category', {
+//   ref: 'Category', //본채의 아이디를 const reviewRoom = mongoose.model('ReviewRoom', reviewRoomSchema);
+//   foreignField: 'category', // 넣어줄곳
+//   localField: '_id'
+// });
+shopItemSchema.pre(/^find/, function(next) {
+  // user 만 쓰면 전체다 나오는거 / path 주면 select 까지 선택가능! boooking 참고!
+  this.populate({ path: 'category', select: 'name' });
+  // .populate({ path: 'amenities', select: 'name' })
   // .populate({
-  //   path: 'wishlist',
-  //   select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+  //   // 이렇게하면 투어에서 리뷰를 볼떄 또 투어를 넣어줄것임... 그래서 밑에서 투어없이 해봄
+  //   //durationWeeks 도 보이는데 이는 가상 결과라 나옴 db에서오는게아님
+  //   path: 'owner',
+  //   select: 'name -wishlist profile_img total_review' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
+  // }); //영상에서는 populate tour는 안썼음.. 그래서 바로 tour에 id가 들어가서 밑에 post에서 tour <-자리에 id가 있는것임
+
+  // this.populate({
+  //   path: 'tour',
+  //   select: 'name'
+  // }).populate({
+  //   // 이렇게하면 투어에서 리뷰를 볼떄 또 투어를 넣어줄것임... 그래서 밑에서 투어없이 해봄
+  //   //durationWeeks 도 보이는데 이는 가상 결과라 나옴 db에서오는게아님
+  //   path: 'user',
+  //   select: '-__v -passwordChangedAt' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
+  // });
+
+  // this.populate({
+  //   // 이렇게하면 투어에서 리뷰를 볼떄 또 투어를 넣어줄것임... 그래서 밑에서 투어없이 해봄
+  //   //durationWeeks 도 보이는데 이는 가상 결과라 나옴 db에서오는게아님
+  //   path: 'user',
+  //   select: '-__v -passwordChangedAt' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
   // });
   next();
 });
-
-userSchema.methods.correctPassword = async function(
-  candidatePassword,
-  userPassword
-) {
-  return await bcrypt.compare(candidatePassword, userPassword);
-};
-
-userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
-  if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(
-      this.passwordChangedAt.getTime() / 1000,
-      10
-    ); //2019-04-30T00:00:00.000z 를 15201233 iso or unix시간? 으로 바꿔줌
-
-    console.log('JWTTimestamp', JWTTimestamp);
-    console.log('changedTimestamp', changedTimestamp);
-    return JWTTimestamp < changedTimestamp;
-  }
-
-  // False means NOT changed
-  return false;
-};
-
-userSchema.methods.createPasswordResetToken = function() {
-  const resetToken = crypto.randomBytes(32).toString('hex');
-
-  //  해쉬한값을 데이터베이스에 넣을거고 resetPassword 사용할때 param으로 해쉬안된 토큰정보를 가져와서
-  // 다시 해쉬해 데이터베이스에 저장된 유저 토큰과 같을시 유효날짜 한번더 확인할것임!
-  this.passwordResetToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-
-  // token을 바로 유저에 저장안하고.. 다시 암호화해서 저장한다
-  console.log({ resetToken }, this.passwordResetToken);
-
-  // 10 mins 유효시간도 저장! -> save는 여기 구문을 빠져나와 부모로직에서 user.save를 해줄것임
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
-
-  return resetToken;
-};
 
 const ShopItem = mongoose.model('ShopItem', shopItemSchema);
 
