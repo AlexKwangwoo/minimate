@@ -24,6 +24,7 @@ const categoryRouter = require('./routes/categoryRoutes');
 const shopItemRouter = require('./routes/shopItemRoutes');
 const cartRouter = require('./routes/cartRoutes');
 const historyRouter = require('./routes/historyRoutes');
+const friendRequestRouter = require('./routes/friendRequestRoutes');
 
 // const amenityRouter = require('./routes/amenityRoutes');
 // const addOnServiceRouter = require('./routes/addOnServiceRoutes');
@@ -154,6 +155,7 @@ app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/shopItems', shopItemRouter);
 app.use('/api/v1/carts', cartRouter);
 app.use('/api/v1/histories', historyRouter);
+app.use('/api/v1/friendRequests', friendRequestRouter);
 
 const theme = new SwaggerTheme();
 
