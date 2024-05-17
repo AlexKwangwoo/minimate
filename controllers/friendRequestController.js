@@ -2,6 +2,7 @@ const factory = require('./handlerFactory');
 const FriendRequest = require('../models/friendRequestModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 exports.getAllFriendRequests = factory.getAll(FriendRequest);
 exports.getFriendRequest = factory.getOne(FriendRequest);
@@ -43,3 +44,84 @@ exports.createFriendRequest = catchAsync(async (req, res, next) => {
     data: doc
   });
 });
+
+exports.acceptFriendRequest = catchAsync(async (req, res, next) => {
+  const friendRequestExist = await FriendRequest.find({
+    _id: req.params.id //accepter -> request receiver
+  });
+
+  if (friendRequestExist.length === 0) {
+    return next(new AppError('The Request does not exist', 404));
+  }
+
+  if (!friendRequestExist[0].receiver._id.equals(req.body.accepter)) {
+    return next(new AppError('Only This Request Reciever Can Accept It', 406));
+  }
+
+  const sender = await User.findByIdAndUpdate(
+    friendRequestExist[0].sender._id,
+    {
+      //$push 여러번 업데이트 될수있다
+      $addToSet: {
+        best_friends: {
+          friend: friendRequestExist[0].receiver._id,
+          friend_nick_name: friendRequestExist[0].receiver_nick_name,
+          my_nick_name: friendRequestExist[0].sender_nick_name
+        }
+      }
+    },
+    { safe: true, upsert: true, new: true },
+    function(err, model) {
+      console.log(err);
+    }
+    // {
+    //   new: true,
+    //   runValidators: true
+    // }
+  ).exec();
+
+  const receiver = await User.findByIdAndUpdate(
+    friendRequestExist[0].receiver._id,
+    {
+      //$push 여러번 업데이트 될수있다
+      $addToSet: {
+        best_friends: {
+          friend: friendRequestExist[0].sender._id,
+          friend_nick_name: friendRequestExist[0].sender_nick_name,
+          my_nick_name: friendRequestExist[0].receiver_nick_name
+        }
+      }
+    },
+    { safe: true, upsert: true, new: true },
+    function(err, model) {
+      console.log(err);
+    }
+    // {
+    //   new: true,
+    //   runValidators: true
+    // }
+  ).exec();
+
+  await FriendRequest.findByIdAndDelete(req.params.id);
+
+  res.status(201).json({
+    status: 'success',
+    data: { sender, receiver }
+  });
+});
+
+// exports.deleteTravel = asyncHandler(async (req, res, next) => {
+//   const travel = await Travel.findByIdAndDelete(req.params.id);
+//   travel.cities.map(cityId => {
+//     City.findByIdAndUpdate(
+//       cityId,
+//       { travels: travels.filter(id => id !== travel._id) },
+//       {
+//         new: true,
+//         runValidators: true,
+//       }
+//     );
+//   });
+
+//   res.status(200).json({ success: true, data: {} });
+// });

@@ -42,10 +42,25 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please choose "man" or "woman"']
   },
 
-  phone_number: {
-    type: String,
-    required: [true, 'Phone number is required']
-  },
+  best_friends: [
+    {
+      // type: mongoose.Schema.Types.ObjectId,
+      friend: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: [true, 'User must belong to a best friend']
+      },
+
+      friend_nick_name: {
+        type: String,
+        required: [true, 'Provide friend_nick_name!']
+      },
+      my_nick_name: {
+        type: String,
+        required: [true, 'Provide friend_nick_name!']
+      }
+    }
+  ],
 
   // role: {
   //   type: String,

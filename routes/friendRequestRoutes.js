@@ -13,4 +13,6 @@ router
   .patch(friendRequestController.updateFriendRequest)
   .delete(friendRequestController.deleteFriendRequest);
 
+router.route('/accept/:id').patch(friendRequestController.acceptFriendRequest);
+
 module.exports = router;
