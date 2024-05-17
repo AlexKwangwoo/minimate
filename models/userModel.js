@@ -131,19 +131,37 @@ userSchema.pre('save', function(next) {
 });
 
 // ^find -=> find로 시작하는 메소드를 받는다면 실행
-userSchema.pre(/^find/, function(next) {
-  //유저찾을때 active가 not equal인걸로 받을것임!
-  // 미리 생성된 유저들중 active 필드가 없는곳이 있을것이므로
-  // equal === true /{active:true} 하는게 아니라 active !== false 를 찾을것임!
-  // this points to the current query
+// userSchema.pre(/^find/, function(next) {
+//   //유저찾을때 active가 not equal인걸로 받을것임!
+//   // 미리 생성된 유저들중 active 필드가 없는곳이 있을것이므로
+//   // equal === true /{active:true} 하는게 아니라 active !== false 를 찾을것임!
+//   // this points to the current query
 
-  // this.find({ active: { $ne: false } });
-  // .populate({
-  //   path: 'wishlist',
-  //   select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
-  // });
-  next();
-});
+//   // .find({ active: { $ne: false } })
+//   console.log('comecomecome');
+//   this.populate({
+//     path: 'best_friends',
+//     select: 'friend friend_nick_name my_nick_name', //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+//     // populate: [
+//     //   // {
+//     //   //   path: 'room',
+//     //   //   model: 'Room',
+//     //   //   select: ''
+//     //   // },
+//     //   {
+//     //     path: 'friend',
+//     //     model: 'User',
+//     //     select: 'name'
+//     //   }
+//     // ],
+//     options: {
+//       limit: 6,
+//       sort: { createdAt: -1 } //-1도됨 createdAt는 내가 입력한 model에서 가져오는것임
+//       // skip: 0
+//     }
+//   });
+//   next();
+// });
 
 userSchema.methods.correctPassword = async function(
   candidatePassword,

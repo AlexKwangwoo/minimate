@@ -175,7 +175,28 @@ exports.createUser = (req, res) => {
   });
 };
 
-exports.getUser = factory.getOne(User);
+exports.getUser = factory.getOne(User, {
+  path: 'best_friends',
+  // -room만 쓰면 안됨..
+  select: 'friend friend_nick_name my_nick_name',
+  populate: [
+    // {
+    //   path: 'room',
+    //   model: 'Room',
+    //   select: ''
+    // },
+    {
+      path: 'friend',
+      model: 'User',
+      select: 'username'
+    }
+  ],
+  options: {
+    limit: 6,
+    sort: { createdAt: -1 } //-1도됨 createdAt는 내가 입력한 model에서 가져오는것임
+    // skip: 0
+  }
+});
 exports.getAllUsers = factory.getAll(User);
 
 // Do NOT update passwords with this!
