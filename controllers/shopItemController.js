@@ -4,13 +4,32 @@ const AWS = require('aws-sdk');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const ShopItem = require('../models/shopItemModel');
+const Category = require('../models/categoryModel');
+
 const AppError = require('../utils/appError');
 
 exports.getAllShopItems = factory.getAll(ShopItem);
 exports.getShopItem = factory.getOne(ShopItem);
-exports.createShopItem = factory.createOne(ShopItem);
+// exports.createShopItem = factory.createOne(ShopItem);
 exports.updateShopItem = factory.updateOne(ShopItem);
 exports.deleteShopItem = factory.deleteOne(ShopItem);
+
+exports.createShopItem = catchAsync(async (req, res, next) => {
+  const cateExist = await Category.find({
+    _id: req.body.category
+  });
+
+  if (cateExist.length === 0) {
+    return next(new AppError('This category does not exist', 404));
+  }
+
+  const doc = await ShopItem.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: doc
+  });
+});
 
 AWS.config.update({
   apiVersion: '2010-12-01',

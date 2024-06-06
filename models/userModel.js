@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please choose "man" or "woman"']
   },
 
+  phone_number: {
+    type: String,
+    required: [true, 'Phone number is required']
+  },
+
   best_friends: [
     {
       // type: mongoose.Schema.Types.ObjectId,

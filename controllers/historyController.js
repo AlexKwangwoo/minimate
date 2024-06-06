@@ -31,11 +31,14 @@ exports.createHistory = catchAsync(async (req, res, next) => {
 
   // eslint-disable-next-line camelcase
   const shop_item_restructured = [];
+
+  console.log('cartExist', cartExist[0].shop_items);
+
   cartExist[0].shop_items.forEach(each => {
     const temp = {
       item_name: each.item_name,
       item_price: each.item_price,
-      category: each.category.name
+      category: each.category ? each.category.name : null
     };
     shop_item_restructured.push(temp);
   });
