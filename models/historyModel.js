@@ -19,6 +19,11 @@ const historySchema = new mongoose.Schema(
           maxlength: [40, 'Name must have less or equal then 40 characters']
         },
 
+        item_img: {
+          type: String,
+          default: null
+        },
+
         item_price: {
           type: Number,
           min: 0,
