@@ -11,3 +11,7 @@
 
 --------- postman publish ----------
 는 view documentation 누른뒤에 publish 가있음....
+
+log check
+heroki login 하고
+heroku logs -n 1500 입력하면 로그 확인가능!

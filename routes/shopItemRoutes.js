@@ -8,6 +8,10 @@ router
   .post(shopItemController.createShopItem);
 
 router
+  .route('/findByCatename')
+  .get(shopItemController.getAllShopItemsByCateName);
+
+router
   .route('/:id')
   .get(shopItemController.getShopItem)
   .patch(shopItemController.updateShopItem)

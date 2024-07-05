@@ -91,3 +91,18 @@ exports.updatePictureToRoom = catchAsync(async (req, res, next) => {
     data: doc
   });
 });
+
+exports.getAllShopItemsByCateName = catchAsync(async (req, res, next) => {
+  console.log('paramsparamsparams!!!', req.query);
+
+  const cate = await Category.findOne({ name: req.query.name });
+
+  console.log('catecate', cate);
+  const doc = await ShopItem.find({ category: cate._id });
+
+  console.log('doc', doc);
+  res.status(200).json({
+    status: 'success',
+    data: doc
+  });
+});
