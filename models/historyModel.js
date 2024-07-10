@@ -53,10 +53,12 @@ const historySchema = new mongoose.Schema(
 
 historySchema.pre(/^find/, function(next) {
   // user 만 쓰면 전체다 나오는거 / path 주면 select 까지 선택가능! boooking 참고!
-  this.populate({ path: 'user', select: 'username id' }).populate({
-    path: 'shop_items',
-    select: 'item_name id'
-  });
+  this.populate({ path: 'user', select: 'username id' });
+  // .populate({ // object 자체를 저장했기에 이부분 필요없음!
+  //   path: 'shop_items',
+  //   select: 'item_name item_img id'
+  // });
+
   // .populate({
   //   // 이렇게하면 투어에서 리뷰를 볼떄 또 투어를 넣어줄것임... 그래서 밑에서 투어없이 해봄
   //   //durationWeeks 도 보이는데 이는 가상 결과라 나옴 db에서오는게아님

@@ -38,6 +38,7 @@ exports.createHistory = catchAsync(async (req, res, next) => {
     const temp = {
       item_name: each.item_name,
       item_price: each.item_price,
+      item_img: each.item_img,
       category: each.category ? each.category.name : null
     };
     shop_item_restructured.push(temp);

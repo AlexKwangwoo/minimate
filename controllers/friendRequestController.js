@@ -11,25 +11,42 @@ exports.updateFriendRequest = factory.updateOne(FriendRequest);
 exports.deleteFriendRequest = factory.deleteOne(FriendRequest);
 
 exports.createFriendRequest = catchAsync(async (req, res, next) => {
+  // console.log('req.body.sender', req.body.sender);
+  // console.log('req.body.receiver', req.body.receiver);
   const friendRequestExist = await FriendRequest.find({
-    $and: [
+    $or: [
       {
-        sender: req.body.sender
+        $and: [
+          {
+            sender: req.body.sender
+          },
+          {
+            receiver: req.body.receiver
+          }
+        ]
       },
       {
-        receiver: req.body.receiver
-      }
-    ]
-  }).find({
-    $and: [
-      {
-        sender: req.body.receiver
-      },
-      {
-        receiver: req.body.sender
+        $and: [
+          {
+            sender: req.body.receiver
+          },
+          {
+            receiver: req.body.sender
+          }
+        ]
       }
     ]
   });
+
+  //   $and:[
+  //     {$or:[
+  //          {"first_name" : "john"},
+  //          {"last_name" : "john"}
+  //     ]},
+  //     {"phone": "12345678"}
+  // ]});
+
+  console.log('friendRequestExist', friendRequestExist);
 
   if (friendRequestExist.length >= 1) {
     return next(

@@ -15,3 +15,12 @@
 log check
 heroki login 하고
 heroku logs -n 1500 입력하면 로그 확인가능!
+
+and + or
+// $and:[
+  //     {$or:[
+// {"first_name" : "john"},
+// {"last_name" : "john"}
+// ]},
+// {"phone": "12345678"}
+// ]});
