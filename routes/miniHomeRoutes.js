@@ -10,8 +10,11 @@ router
   // .patch(miniHomeController.updateMiniHome)
   .delete(miniHomeController.deleteMiniHome);
 
+router.route('/:id/textHistory').post(miniHomeController.addTextHistory);
+
 router
   .route('/:id/textHistory/:textHistoryId')
-  .patch(miniHomeController.updateTextHistory);
+  .patch(miniHomeController.updateTextHistory)
+  .delete(miniHomeController.deleteTextHistory);
 
 module.exports = router;
