@@ -11,7 +11,7 @@ router
   .delete(miniHomeController.deleteMiniHome);
 
 router.route('/:id/textHistory').post(miniHomeController.addTextHistory);
-
+// asdasd
 router
   .route('/:id/textHistory/:textHistoryId')
   .patch(miniHomeController.updateTextHistory)
