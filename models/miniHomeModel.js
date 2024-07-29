@@ -24,6 +24,23 @@ const miniHomeSchema = new mongoose.Schema(
       default: '#268db2'
     },
 
+    total_view: {
+      type: Number,
+      default: 0
+    },
+
+    today_view: {
+      today_view_number: {
+        type: Number,
+        default: 0
+      },
+
+      today_view_date: {
+        type: Date,
+        default: Date.now()
+      }
+    },
+
     // domain_photo_folders: [
     //   {
     //     type: mongoose.Schema.ObjectId,

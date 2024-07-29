@@ -54,7 +54,7 @@ exports.getOne = (Model, popOptions) =>
     }
 
     console.log('come to get one!!');
-    console.log('???', req.query);
+    // console.log('???', req.query);
     // console.log('queryquery', query);
     if (popOptions) query = query.populate(popOptions);
 

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const MiniHome = require('../models/miniHomeModel');
 // const sendEmail = require('../utils/email');
 // const Email = require('./../utils/email');
 
@@ -50,7 +51,13 @@ exports.signup = catchAsync(async (req, res, next) => {
     gender: req.body.gender,
     phone_number: req.body.phone_number,
     password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm
+    passwordConfirm: req.body.passwordConfirm,
+    domain: `https://minimate-cy.netlify.app/${req.body.username}`
+  });
+
+  const newMiniHome = await MiniHome.create({
+    owner: newUser._id,
+    url: `https://minimate-cy.netlify.app/${newUser.username}`
   });
 
   // res.status(201).json({
