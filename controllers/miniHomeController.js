@@ -290,3 +290,100 @@ exports.deleteBestFriendComment = catchAsync(async (req, res, next) => {
     data: foundMiniHome
   });
 });
+
+exports.addItemToMiniHome = catchAsync(async (req, res, next) => {
+  const foundMiniHome = await MiniHome.findOne({
+    _id: req.params.id
+  });
+
+  // return next(new AppError('bye', 404));
+
+  if (foundMiniHome) {
+    const temp = [
+      {
+        img_url: req.body.img_url,
+        category: req.body.category,
+        item_name: req.body.item_name,
+        x_location: req.body.x_location,
+        y_location: req.body.y_location,
+        enable: req.body.enable
+      }
+    ];
+    const temp2 = [...foundMiniHome.sub_img];
+
+    temp.push(...temp2);
+    foundMiniHome.sub_img = temp;
+    foundMiniHome.save({ validateBeforeSave: false });
+  } else {
+    return next(new AppError('Can not find minihome', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: foundMiniHome
+  });
+});
+
+exports.updateItemInMiniHome = catchAsync(async (req, res, next) => {
+  const foundMiniHome = await MiniHome.findOne({
+    _id: req.params.id
+  });
+
+  let findIndex;
+
+  if (foundMiniHome) {
+    foundMiniHome.sub_img.forEach((each, index) => {
+      if (each._id.equals(req.params.subimgId)) {
+        // eslint-disable-next-line no-unused-expressions
+        findIndex = index;
+      }
+    });
+  } else {
+    return next(new AppError('Can not find minihome', 404));
+  }
+
+  // console.log(
+  //   ' foundMiniHome.sub_img[findIndex]',
+  //   foundMiniHome.sub_img[findIndex]
+  // );
+  // console.log('req.body', req.body);
+  if (findIndex >= 0) {
+    // const tempItem = { ...foundMiniHome.sub_img[findIndex]._doc, ...req.body };
+    // console.log('tempItem', tempItem);
+
+    Object.keys(req.body).forEach(item => {
+      if (foundMiniHome.sub_img[findIndex][item])
+        foundMiniHome.sub_img[findIndex][item] = req.body[item];
+    });
+
+    foundMiniHome.save({ validateBeforeSave: false });
+  } else {
+    return next(new AppError('This text commentId ID does not exist', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: foundMiniHome
+  });
+});
+
+exports.deleteItemFromMiniHome = catchAsync(async (req, res, next) => {
+  const foundMiniHome = await MiniHome.findOne({
+    _id: req.params.id
+  });
+
+  if (foundMiniHome) {
+    const temp = foundMiniHome.sub_img.filter(each => {
+      return !each._id.equals(req.params.subimgId);
+    });
+    foundMiniHome.sub_img = temp;
+    foundMiniHome.save({ validateBeforeSave: false });
+  } else {
+    return next(new AppError('Can not find minihome', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: foundMiniHome
+  });
+});

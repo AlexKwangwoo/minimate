@@ -11,6 +11,8 @@ router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 router.route('/').get(userController.getAllUsers);
 
+router.route('/:userId/items').get(userController.getUserItems);
+
 // Protect all routes after this middleware
 // 이밑으로는 다 유저로그인 상태에서만 가능!
 router.use(authController.protect);

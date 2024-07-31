@@ -22,11 +22,16 @@ router
 router
   .route('/:id/bestFriendComment')
   .post(miniHomeController.addBestFriendComment);
-
 router
   .route('/:id/bestFriendComment/:commentId')
   .patch(miniHomeController.updateBestFriendComment)
   .delete(miniHomeController.deleteBestFriendComment);
+
+router.route('/:id/item').post(miniHomeController.addItemToMiniHome);
+router
+  .route('/:id/item/:subimgId')
+  .patch(miniHomeController.updateItemInMiniHome)
+  .delete(miniHomeController.deleteItemFromMiniHome);
 
 // router.route('/:id/addView').patch(miniHomeController.updateViewMiniHome);
 

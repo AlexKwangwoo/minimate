@@ -6,6 +6,7 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
+const History = require('../models/historyModel');
 
 // ****** s3 쓰고싶으면 노션노트에 저장해뒀음!
 // 이거는 sharp에서 저장장소 지정해줄것임 이거는 컴퓨터에 저장이고..
@@ -309,6 +310,32 @@ exports.updateMyPromotion = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: updatedDoc
+  });
+});
+
+exports.getUserItems = catchAsync(async (req, res, next) => {
+  // To allow for nested GET reviews on tour (hack)
+  const foundHistory = await History.find({
+    user: req.params.userId
+  });
+
+  const temp = [];
+  foundHistory.forEach(each => {
+    temp.push(...each.shop_items);
+  });
+
+  const doc = temp;
+
+  // 쿼리를 다 짜집기해서 마지막에 await을 붙여줘서 promise를 반환하는것의 값을 받아낸다 즉 paginate까지 모든 함수를
+  // 다 거친뒤 promise로 보내버리기때문
+  // 사실상 await Tour.find().find(xxx).sort(xxx).select(xxx).skip(xxx).limit(xxx) 라고보면됨
+  // await안붙여주면 프로미스 안기다린거기때문에 불러봐야 .query는 프로미스상태임!
+  // const doc = await features.query.explain(); 퍼포먼스 검사
+  // SEND RESPONSE
+  res.status(200).json({
+    status: 'success',
+    results: doc.length,
+    data: doc
   });
 });
 

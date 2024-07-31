@@ -29,6 +29,7 @@ const historySchema = new mongoose.Schema(
           min: 0,
           required: [true, 'Provide price!']
         },
+
         category: {
           type: String
           // required: [true, 'Category must belong to a shop item']

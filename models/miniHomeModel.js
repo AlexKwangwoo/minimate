@@ -114,6 +114,17 @@ const miniHomeSchema = new mongoose.Schema(
           type: String,
           default: null
         },
+
+        category: {
+          type: String
+          // required: [true, 'Category must belong to a shop item']
+        },
+
+        item_name: {
+          type: String,
+          maxlength: [40, 'Name must have less or equal then 40 characters']
+        },
+
         x_location: {
           type: String,
           default: null
