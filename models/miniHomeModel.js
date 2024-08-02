@@ -138,6 +138,26 @@ const miniHomeSchema = new mongoose.Schema(
           default: true
         }
       }
+    ],
+
+    photo_folder: [
+      {
+        folder_name: {
+          type: String,
+          required: [true, 'Provide name!'],
+          maxlength: [20, 'Name must have less or equal then 20 characters']
+        },
+
+        privacy_scope: {
+          type: String,
+          defualt: 'public'
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now()
+        },
+        updatedAt: { type: Date, default: Date.now() }
+      }
     ]
 
     // role: {

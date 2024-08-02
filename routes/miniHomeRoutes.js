@@ -33,6 +33,12 @@ router
   .patch(miniHomeController.updateItemInMiniHome)
   .delete(miniHomeController.deleteItemFromMiniHome);
 
+router.route('/:id/photoFolder').post(miniHomeController.addPhotoFolder);
+router
+  .route('/:id/photoFolder/:photoFolderId')
+  .patch(miniHomeController.updatePhotoFolder)
+  .delete(miniHomeController.deletePhotoFolder);
+
 // router.route('/:id/addView').patch(miniHomeController.updateViewMiniHome);
 
 module.exports = router;
