@@ -39,6 +39,15 @@ router
   .patch(miniHomeController.updatePhotoFolder)
   .delete(miniHomeController.deletePhotoFolder);
 
+router
+  .route('/:id/bannnerPhoto')
+  .patch(
+    miniHomeController.uploadPhotoImages,
+    miniHomeController.insertUserImagesLinks,
+    miniHomeController.updatePictureToBanner
+  )
+  .delete(miniHomeController.deletePictureToBanner);
+
 // router.route('/:id/addView').patch(miniHomeController.updateViewMiniHome);
 
 module.exports = router;
