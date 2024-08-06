@@ -26,6 +26,8 @@ const cartRouter = require('./routes/cartRoutes');
 const historyRouter = require('./routes/historyRoutes');
 const friendRequestRouter = require('./routes/friendRequestRoutes');
 const miniHomeRouter = require('./routes/miniHomeRoutes');
+const miniHomePhotoRouter = require('./routes/miniHomePhotoRoutes');
+
 // const amenityRouter = require('./routes/amenityRoutes');
 // const addOnServiceRouter = require('./routes/addOnServiceRoutes');
 // const categoryRouter = require('./routes/categoryRoutes');
@@ -157,6 +159,7 @@ app.use('/api/v1/carts', cartRouter);
 app.use('/api/v1/histories', historyRouter);
 app.use('/api/v1/friendRequests', friendRequestRouter);
 app.use('/api/v1/miniHome', miniHomeRouter);
+app.use('/api/v1/miniHomePhoto', miniHomePhotoRouter);
 
 const theme = new SwaggerTheme();
 

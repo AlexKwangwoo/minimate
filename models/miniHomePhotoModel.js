@@ -13,6 +13,12 @@ const miniHomePhotoSchema = new mongoose.Schema(
       required: [true, 'Provide folder id!']
     },
 
+    photo_url: {
+      type: String,
+      required: [true, 'Please provide photo url'],
+      default: null
+    },
+
     photo_privacy_scope: {
       type: String,
       defualt: 'public'
