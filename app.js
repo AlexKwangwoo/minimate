@@ -27,6 +27,7 @@ const historyRouter = require('./routes/historyRoutes');
 const friendRequestRouter = require('./routes/friendRequestRoutes');
 const miniHomeRouter = require('./routes/miniHomeRoutes');
 const miniHomePhotoRouter = require('./routes/miniHomePhotoRoutes');
+const guestBookRouter = require('./routes/guestBookRoutes');
 
 // const amenityRouter = require('./routes/amenityRoutes');
 // const addOnServiceRouter = require('./routes/addOnServiceRoutes');
@@ -160,6 +161,7 @@ app.use('/api/v1/histories', historyRouter);
 app.use('/api/v1/friendRequests', friendRequestRouter);
 app.use('/api/v1/miniHome', miniHomeRouter);
 app.use('/api/v1/miniHomePhoto', miniHomePhotoRouter);
+app.use('/api/v1/guestBook', guestBookRouter);
 
 const theme = new SwaggerTheme();
 

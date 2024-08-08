@@ -24,3 +24,17 @@ and + or
 // ]},
 // {"phone": "12345678"}
 // ]});
+
+findOne은
+const foundMiniHome = await MiniHome.findOne(
+{
+\_id: req.body.miniHome
+},
+function(err, miniHome) {
+// if (err) { ... }
+if (!miniHome) {
+// no user found, do sth
+return next(new AppError('Can not find the minihome', 404));
+}
+}
+); 이런식으로 에러및 결과를 대비할수있다!
