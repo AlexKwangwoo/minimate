@@ -58,7 +58,7 @@ exports.createGuestBook = catchAsync(async (req, res, next) => {
       each.friend.equals(req.body.friendId)
     )[0];
 
-    if (!foundIamHisBestFriend) {
+    if (!foundIamHisBestFriend && foundMiniHome.owner !== req.body.friendId) {
       return next(
         new AppError(
           'This is not best friend, only best friend can write the book',
