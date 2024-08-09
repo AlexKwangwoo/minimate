@@ -26,6 +26,11 @@ const guestBookSchema = new mongoose.Schema(
       required: [true, 'Please provide friend_nick_name']
     },
 
+    friend_img: {
+      type: String,
+      default: null
+    },
+
     privacy_scope: {
       type: String,
       defualt: 'public'

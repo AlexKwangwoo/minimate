@@ -73,6 +73,7 @@ exports.createGuestBook = catchAsync(async (req, res, next) => {
       friendId: req.body.friendId,
       friend_name: foundIamHisBestFriend.friend.username,
       friend_nick_name: foundIamHisBestFriend.friend_nick_name,
+      friend_img: foundIamHisBestFriend.friend_nick_name.minime_img,
       content: req.body.content,
       privacy_scope: req.body.privacy_scope
     };
@@ -87,59 +88,45 @@ exports.createGuestBook = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.updatePictureToPhotoFolder = catchAsync(async (req, res, next) => {
-  // console.log('req.body.images', req.body.images);
-  const doc = await MiniHomePhoto.create({
-    ...req.body,
-    photo_url: req.body.images[0]
-  });
-
-  res.status(200).json({
-    status: 'success',
-    data: doc
-  });
-});
-
-exports.updatePhotoInside = catchAsync(async (req, res, next) => {
-  const foundMiniHomePhoto = await MiniHomePhoto.findOne({
+exports.updateGuestBookInside = catchAsync(async (req, res, next) => {
+  const foundGuestBook = await GuestBook.findOne({
     _id: req.params.id
   });
 
-  if (foundMiniHomePhoto) {
-    ['photo_title', 'photo_privacy_scope', 'content'].forEach(each => {
+  if (foundGuestBook) {
+    ['privacy_scope', 'content'].forEach(each => {
       if (req.body[each]) {
-        foundMiniHomePhoto[each] = req.body[each];
+        foundGuestBook[each] = req.body[each];
       }
     });
 
-    foundMiniHomePhoto.save({ validateBeforeSave: false });
+    foundGuestBook.save({ validateBeforeSave: false });
   } else {
     return next(new AppError('Can not find minihome photo', 404));
   }
 
   res.status(201).json({
     status: 'success',
-    data: foundMiniHomePhoto
+    data: foundGuestBook
   });
 });
 
-exports.deleteMiniHomePhoto = factory.deleteOne(MiniHomePhoto);
-
 exports.addComment = catchAsync(async (req, res, next) => {
-  const foundMiniHomePhoto = await MiniHomePhoto.findOne({
+  const foundGuestBook = await GuestBook.findOne({
     _id: req.params.id
   });
 
   // { $elemMatch: { award: 'National Medal', year: 1975 } }
   // !! owner 아이디를 직접 url에 받아서 할수있으나 쿼리 공부를 위해 이렇게 owner를 찾아봄!!
+  console.log('foundGuestBookfoundGuestBook', foundGuestBook);
   const foundMiniHome = await MiniHome.findOne({
-    photo_folder: { $elemMatch: { _id: foundMiniHomePhoto.photo_folder_id } }
+    _id: foundGuestBook.miniHome
   });
 
   const foundOwner = await User.findOne({ _id: foundMiniHome.owner }).populate({
     path: 'best_friends',
     // -room만 쓰면 안됨..
-    select: 'friend friend_nick_name my_nick_name',
+    select: 'friend friend_nick_name my_inck_name',
     populate: [
       // {
       //   path: 'room',
@@ -163,7 +150,7 @@ exports.addComment = catchAsync(async (req, res, next) => {
     each.friend.equals(req.body.friendId)
   )[0];
 
-  if (!foundIamHisBestFriend) {
+  if (!foundIamHisBestFriend && foundMiniHome.owner !== req.body.friendId) {
     return next(
       new AppError(
         'This is not best friend, only best friend can send a comment',
@@ -173,7 +160,7 @@ exports.addComment = catchAsync(async (req, res, next) => {
   }
   // return next(new AppError('bye', 404));
 
-  if (foundMiniHomePhoto) {
+  if (foundGuestBook) {
     const temp = [
       {
         friendId: req.body.friendId,
@@ -184,30 +171,30 @@ exports.addComment = catchAsync(async (req, res, next) => {
         updatedAt: new Date()
       }
     ];
-    const temp2 = [...foundMiniHomePhoto.comment];
+    const temp2 = [...foundGuestBook.comment];
 
     temp.push(...temp2);
-    foundMiniHomePhoto.comment = temp;
-    foundMiniHomePhoto.save({ validateBeforeSave: false });
+    foundGuestBook.comment = temp;
+    foundGuestBook.save({ validateBeforeSave: false });
   } else {
-    return next(new AppError('Can not find minihome photo', 404));
+    return next(new AppError('Can not find minihome guest book', 404));
   }
 
   res.status(201).json({
     status: 'success',
-    data: foundMiniHomePhoto
+    data: foundGuestBook
   });
 });
 
-exports.updatePhotoComment = catchAsync(async (req, res, next) => {
-  const foundMiniHomePhoto = await MiniHomePhoto.findOne({
+exports.updateGuestBookComment = catchAsync(async (req, res, next) => {
+  const foundGuestBook = await GuestBook.findOne({
     _id: req.params.id
   });
 
   let findIndex;
 
-  if (foundMiniHomePhoto) {
-    foundMiniHomePhoto.comment.forEach((each, index) => {
+  if (foundGuestBook) {
+    foundGuestBook.comment.forEach((each, index) => {
       if (each._id.equals(req.params.commentId)) {
         // eslint-disable-next-line no-unused-expressions
         findIndex = index;
@@ -218,37 +205,37 @@ exports.updatePhotoComment = catchAsync(async (req, res, next) => {
   }
 
   if (findIndex >= 0) {
-    foundMiniHomePhoto.comment[findIndex].text = req.body.text;
-    foundMiniHomePhoto.comment[findIndex].updatedAt = new Date();
+    foundGuestBook.comment[findIndex].text = req.body.text;
+    foundGuestBook.comment[findIndex].updatedAt = new Date();
 
-    foundMiniHomePhoto.save({ validateBeforeSave: false });
+    foundGuestBook.save({ validateBeforeSave: false });
   } else {
     return next(new AppError('This text commentId ID does not exist', 404));
   }
 
   res.status(201).json({
     status: 'success',
-    data: foundMiniHomePhoto
+    data: foundGuestBook
   });
 });
 
-exports.deletePhotoComment = catchAsync(async (req, res, next) => {
-  const foundMiniHomePhoto = await MiniHomePhoto.findOne({
+exports.deleteGuestBookComment = catchAsync(async (req, res, next) => {
+  const foundGuestBook = await GuestBook.findOne({
     _id: req.params.id
   });
 
-  if (foundMiniHomePhoto) {
-    const temp = foundMiniHomePhoto.comment.filter(each => {
+  if (foundGuestBook) {
+    const temp = foundGuestBook.comment.filter(each => {
       return !each._id.equals(req.params.commentId);
     });
-    foundMiniHomePhoto.comment = temp;
-    foundMiniHomePhoto.save({ validateBeforeSave: false });
+    foundGuestBook.comment = temp;
+    foundGuestBook.save({ validateBeforeSave: false });
   } else {
     return next(new AppError('Can not find minihome photo', 404));
   }
 
   res.status(201).json({
     status: 'success',
-    data: foundMiniHomePhoto
+    data: foundGuestBook
   });
 });

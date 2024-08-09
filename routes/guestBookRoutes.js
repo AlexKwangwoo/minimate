@@ -10,14 +10,14 @@ router
 
 router
   .route('/:id')
-  // .patch(guestBookController.updatePhotoInside)
+  .patch(guestBookController.updateGuestBookInside)
   .delete(guestBookController.deleteGuestBook);
 
-// router.route('/:id/comment').post(guestBookController.addComment);
+router.route('/:id/comment').post(guestBookController.addComment);
 
-// router
-//   .route('/:id/comment/:commentId')
-//   .patch(guestBookController.updatePhotoComment)
-//   .delete(guestBookController.deletePhotoComment);
+router
+  .route('/:id/comment/:commentId')
+  .patch(guestBookController.updateGuestBookComment)
+  .delete(guestBookController.deleteGuestBookComment);
 
 module.exports = router;
