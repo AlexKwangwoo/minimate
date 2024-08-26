@@ -8,6 +8,7 @@ const MiniHomeDiary = require('../models/miniHomeDiaryModel');
 exports.getAllMiniHomeDiaries = factory.getAll(MiniHomeDiary);
 exports.createDiary = factory.createOne(MiniHomeDiary);
 
+//
 // exports.updateDiaryToDiaryFolder = catchAsync(async (req, res, next) => {
 //   // console.log('req.body.images', req.body.images);
 //   const doc = await MiniHomeDiary.create({
