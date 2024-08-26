@@ -50,4 +50,10 @@ router
 
 // router.route('/:id/addView').patch(miniHomeController.updateViewMiniHome);
 
+router.route('/:id/diaryFolder').post(miniHomeController.addDiaryFolder);
+router
+  .route('/:id/diaryFolder/:diaryFolderId')
+  .patch(miniHomeController.updateDiaryFolder)
+  .delete(miniHomeController.deleteDiaryFolder);
+
 module.exports = router;

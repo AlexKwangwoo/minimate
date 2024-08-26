@@ -561,3 +561,92 @@ exports.deletePictureToBanner = catchAsync(async (req, res, next) => {
     data: doc
   });
 });
+
+// Diary Folder --------------------------------
+
+exports.addDiaryFolder = catchAsync(async (req, res, next) => {
+  const foundMiniHome = await MiniHome.findOne({
+    _id: req.params.id
+  });
+
+  // return next(new AppError('bye', 404));
+
+  if (foundMiniHome) {
+    const temp = [
+      {
+        folder_name: req.body.folder_name,
+        privacy_scope: req.body.privacy_scope,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+    const temp2 = [...foundMiniHome.diary_folder];
+
+    temp.push(...temp2);
+    foundMiniHome.diary_folder = temp;
+    foundMiniHome.save({ validateBeforeSave: false });
+  } else {
+    return next(new AppError('Can not find minihome', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: foundMiniHome
+  });
+});
+
+exports.updateDiaryFolder = catchAsync(async (req, res, next) => {
+  const foundMiniHome = await MiniHome.findOne({
+    _id: req.params.id
+  });
+
+  let findIndex;
+
+  if (foundMiniHome) {
+    foundMiniHome.diary_folder.forEach((each, index) => {
+      if (each._id.equals(req.params.diaryFolderId)) {
+        // eslint-disable-next-line no-unused-expressions
+        findIndex = index;
+      }
+    });
+  } else {
+    return next(new AppError('Can not find minihome', 404));
+  }
+
+  if (findIndex >= 0) {
+    Object.keys(req.body).forEach(item => {
+      if (foundMiniHome.diary_folder[findIndex][item])
+        foundMiniHome.diary_folder[findIndex][item] = req.body[item];
+    });
+    foundMiniHome.diary_folder[findIndex].updatedAt = new Date();
+    foundMiniHome.save({ validateBeforeSave: false });
+  } else {
+    return next(new AppError('This text photoFolderId does not exist', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: foundMiniHome
+  });
+});
+
+exports.deleteDiaryFolder = catchAsync(async (req, res, next) => {
+  const foundMiniHome = await MiniHome.findOne({
+    _id: req.params.id
+  });
+
+  if (foundMiniHome) {
+    const temp = foundMiniHome.diary_folder.filter(each => {
+      return !each._id.equals(req.params.diaryFolderId);
+    });
+    foundMiniHome.diary_folder = temp;
+    foundMiniHome.save({ validateBeforeSave: false });
+  } else {
+    return next(new AppError('Can not find minihome', 404));
+  }
+
+  res.status(201).json({
+    status: 'success',
+    data: foundMiniHome
+  });
+});
