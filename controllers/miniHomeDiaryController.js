@@ -10,6 +10,9 @@ exports.createDiary = factory.createOne(MiniHomeDiary);
 
 //
 //
+//
+//
+//
 
 //
 // exports.updateDiaryToDiaryFolder = catchAsync(async (req, res, next) => {
