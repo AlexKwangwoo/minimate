@@ -8,16 +8,16 @@ router
   .get(miniHomeDiaryController.getAllMiniHomeDiaries)
   .post(miniHomeDiaryController.createDiary);
 
-// router
-//   .route('/:id')
-//   .patch(miniHomeDiaryController.updatePhotoInside)
-//   .delete(miniHomeDiaryController.deleteMiniHomePhoto);
+router
+  .route('/:id')
+  .patch(miniHomeDiaryController.updateDiary)
+  .delete(miniHomeDiaryController.deleteDiary);
 
-// router.route('/:id/comment').post(miniHomeDiaryController.addComment);
+router.route('/:id/comment').post(miniHomeDiaryController.addComment);
 
-// router
-//   .route('/:id/comment/:commentId')
-//   .patch(miniHomeDiaryController.updatePhotoComment)
-//   .delete(miniHomeDiaryController.deletePhotoComment);
+router
+  .route('/:id/comment/:commentId')
+  .patch(miniHomeDiaryController.updateDiaryComment)
+  .delete(miniHomeDiaryController.deleteDiaryComment);
 
 module.exports = router;
